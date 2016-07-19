@@ -1,0 +1,13 @@
+version: '2'
+services:
+  haproxy:
+    image: haproxy:latest
+    volumes:
+      - /data/dockerfile/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    ports:
+      - 23456:23456
+    networks:
+      - my-load
+networks:
+  my-load:
+    external: true

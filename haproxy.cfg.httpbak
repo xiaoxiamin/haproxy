@@ -1,0 +1,36 @@
+global
+    log         127.0.0.1 local2
+
+    maxconn     4000
+defaults
+    mode                    http
+    timeout http-request    10s
+    timeout connect         5000ms
+    timeout client          5000ms
+    timeout server          5000ms
+    timeout http-keep-alive 10s
+    timeout check           10s
+    maxconn                 3000
+
+resolvers docker_dns
+    nameserver dns "127.0.0.11:53"
+    timeout retry  1s
+    hold valid 1s
+
+frontend webserver
+    bind *:80
+    mode http
+    log global
+    default_backend server
+backend server
+    balance roundrobin
+    server  app_1 lnmp_openresty_1:80 check resolvers docker_dns resolve-prefer ipv4
+    server  app_2 lnmp_openresty_2:80 check resolvers docker_dns resolve-prefer ipv4
+    server  app_3 lnmp_openresty_3:80 check resolvers docker_dns resolve-prefer ipv4
+    server  app_4 lnmp_openresty_4:80 check resolvers docker_dns resolve-prefer ipv4
+    server  app_5 lnmp_openresty_5:80 check resolvers docker_dns resolve-prefer ipv4
+#     server  app_1 172.21.0.3:80 check
+#     server  app_2 172.21.0.10:80 check
+#     server  app_3 172.21.0.9:80 check
+#     server  app_4 172.17.0.11:80 check
+#     server  app_5 172.17.0.8:80 check
